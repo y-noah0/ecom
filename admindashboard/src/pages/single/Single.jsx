@@ -6,7 +6,7 @@ import List from "../../components/table/Table";
 import { useParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { userService } from "../../services/apiService";
-import { format } from "date-fns";
+
 
 const Single = () => {
   const { userId } = useParams();
@@ -21,6 +21,7 @@ const Single = () => {
   if (error) return <div>Error: {error.message}</div>;
 
   const userData = user?.data;
+  console.log( 'user data', userData); 
   const address = userData?.addresses?.[0]; // Get first address
 
   return (
@@ -39,46 +40,24 @@ const Single = () => {
                 className="itemImg"
               />
               <div className="details">
-                <h1 className="itemTitle">{userData?.name || "N/A"}</h1>
-                <div className="detailItem">
-                  <span className="itemKey">Username:</span>
-                  <span className="itemValue">{userData?.username || "N/A"}</span>
-                </div>
+                <h1 className="itemTitle">{userData?.name || "Jane Doe"}</h1>
                 <div className="detailItem">
                   <span className="itemKey">Email:</span>
-                  <span className="itemValue">{userData?.email || "N/A"}</span>
+                  <span className="itemValue">{userData?.email || "janedoe@gmail.com"}</span>
                 </div>
                 <div className="detailItem">
                   <span className="itemKey">Phone:</span>
-                  <span className="itemValue">{userData?.phone || "N/A"}</span>
+                  <span className="itemValue">{userData?.phone || "+1 2345 67 89"}</span>
                 </div>
                 <div className="detailItem">
                   <span className="itemKey">Address:</span>
                   <span className="itemValue">
-                    {address ? `${address.street}, ${address.city}, ${address.state}` : "N/A"}
+                    {address ? `${address.street}, ${address.city}, ${address.state}` : "Elton St. 234 Garden Yd. NewYork"}
                   </span>
                 </div>
                 <div className="detailItem">
                   <span className="itemKey">Country:</span>
-                  <span className="itemValue">{address?.country || "N/A"}</span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Zip Code:</span>
-                  <span className="itemValue">{address?.zipCode || "N/A"}</span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Role:</span>
-                  <span className="itemValue">{userData?.role || "N/A"}</span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Created:</span>
-                  <span className="itemValue">
-                    {userData?.createdAt ? format(new Date(userData.createdAt), 'dd/MM/yyyy HH:mm') : "N/A"}
-                  </span>
-                </div>
-                <div className="detailItem">
-                  <span className="itemKey">Orders:</span>
-                  <span className="itemValue">{userData?.orders?.length || 0} orders</span>
+                  <span className="itemValue">{address?.country || "USA"}</span>
                 </div>
               </div>
             </div>
@@ -89,7 +68,7 @@ const Single = () => {
         </div>
         <div className="bottom">
           <h1 className="title">Last Transactions</h1>
-          <List orders={userData?.orders || []}/>
+          <List orders={userData?.data.orders || []}/>
         </div>
       </div>
     </div>

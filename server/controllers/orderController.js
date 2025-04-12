@@ -65,6 +65,29 @@ const orderController = {
     }
   },
 
+  // Get all orders (admin only)
+  getAllOrders: async (req, res) => {
+    try {
+      // Check if user is admin
+      if (req.user.role !== 'admin') {
+        return res.status(403).json({ error: 'Not authorized. Admin access required.' });
+      }
+
+      const orders = await Order.find({})
+        .populate('products.productId')
+        .populate('userId', 'name email')
+        .sort('-createdAt');
+
+      res.json({
+        count: orders.length,
+        orders: orders
+      });
+    } catch (error) {
+      console.error('Error fetching all orders:', error);
+      res.status(500).json({ error: 'Error fetching orders' });
+    }
+  },
+
   // Update order status
   updateStatus: async (req, res) => {
     try {

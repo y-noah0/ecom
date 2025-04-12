@@ -13,6 +13,8 @@ import { DarkModeContext } from "./context/darkModeContext";
 import { AuthContext } from "./Context/authcontext/AuthContext";
 import SingleProduct from "./pages/SingleProduct/SingleProduct";
 import ProductList from "./pages/productList/ProductList";
+import OrderList from "./pages/orderList/OrderList";
+
 
 const ProtectedRoute = ({ children }) => {
   const { user } = useContext(AuthContext);
@@ -65,7 +67,7 @@ function App() {
               } />
             </Route>
 
-            {/* Products Routes - Using SingleProduct for product details */}
+            {/* Products Routes */}
             <Route path="products">
               <Route index element={
                 <ProtectedRoute>
@@ -80,6 +82,25 @@ function App() {
               <Route path="new" element={
                 <ProtectedRoute>
                   <New inputs={productInputs} title="Add New Product" />
+                </ProtectedRoute>
+              } />
+            </Route>
+
+            {/* Orders Routes */}
+            <Route path="orders">
+              <Route index element={
+                <ProtectedRoute>
+                  <OrderList />
+                </ProtectedRoute>
+              } />
+              <Route path=":orderId" element={
+                <ProtectedRoute>
+                  <Single />
+                </ProtectedRoute>
+              } />
+              <Route path="new" element={
+                <ProtectedRoute>
+                  <New inputs={[]} title="Add New Order" />
                 </ProtectedRoute>
               } />
             </Route>
