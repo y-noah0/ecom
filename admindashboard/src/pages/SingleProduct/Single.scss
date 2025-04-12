@@ -1,0 +1,296 @@
+.single {
+    display: flex;
+    width: 100%;
+    
+    .singleContainer {
+      flex: 6;
+  
+      .top {
+        padding: 20px;
+        display: flex;
+        gap: 20px;
+  
+        .left {
+          flex: 3;
+          box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+          padding: 20px;
+          position: relative;
+          border-radius: 8px;
+          
+          .backButton {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            padding: 5px 10px;
+            background-color: #f0f0f0;
+            color: #333;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            
+            &:hover {
+              background-color: #e0e0e0;
+            }
+          }
+  
+          .editButton {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            padding: 5px 10px;
+            background-color: #7451f8;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            
+            &:hover {
+              background-color: #5925f3;
+            }
+          }
+  
+          .title {
+            font-size: 24px;
+            color: #888;
+            margin-bottom: 20px;
+            margin-top: 30px;
+          }
+  
+          .item {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+  
+            .productImages {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              margin-bottom: 20px;
+              
+              .itemImg {
+                width: 100%;
+                max-width: 500px;
+                height: 300px;
+                object-fit: contain;
+                margin-bottom: 10px;
+                border-radius: 5px;
+              }
+              
+              .thumbnails {
+                display: flex;
+                gap: 8px;
+                flex-wrap: wrap;
+                justify-content: center;
+                
+                .thumbnail {
+                  width: 60px;
+                  height: 60px;
+                  object-fit: cover;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  transition: all 0.3s ease;
+                  border: 2px solid transparent;
+                  
+                  &.active {
+                    border-color: #7451f8;
+                  }
+                  
+                  &:hover {
+                    transform: scale(1.05);
+                  }
+                }
+              }
+            }
+  
+            .details {
+              .itemTitle {
+                font-size: 30px;
+                font-weight: 600;
+                margin-bottom: 20px;
+                color: #333;
+              }
+  
+              .detailItem {
+                margin-bottom: 15px;
+                
+                .itemKey {
+                  font-weight: bold;
+                  color: gray;
+                  margin-right: 10px;
+                  font-size: 16px;
+                }
+  
+                .itemValue {
+                  font-size: 16px;
+                  
+                  &.inStock {
+                    color: green;
+                    font-weight: 600;
+                  }
+                  
+                  &.outOfStock {
+                    color: red;
+                    font-weight: 600;
+                  }
+                }
+                
+                .tags {
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 8px;
+                  
+                  .tag {
+                    background-color: #f2f2f2;
+                    padding: 4px 8px;
+                    border-radius: 4px;
+                    font-size: 14px;
+                  }
+                }
+                
+                .variants {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 8px;
+                  
+                  .variant {
+                    display: flex;
+                    gap: 15px;
+                    background-color: #f9f9f9;
+                    padding: 8px;
+                    border-radius: 5px;
+                    
+                    span {
+                      font-size: 14px;
+                    }
+                  }
+                }
+              }
+            }
+            
+            .editDetails {
+              width: 100%;
+              
+              form {
+                display: flex;
+                flex-direction: column;
+                gap: 15px;
+                
+                .formItem {
+                  display: flex;
+                  flex-direction: column;
+                  gap: 8px;
+                  
+                  label {
+                    font-weight: 600;
+                    color: #555;
+                  }
+                  
+                  input, textarea {
+                    padding: 10px;
+                    border: 1px solid #ddd;
+                    border-radius: 5px;
+                    font-size: 16px;
+                    
+                    &:focus {
+                      outline: none;
+                      border-color: #7451f8;
+                    }
+                  }
+                  
+                  &.checkbox {
+                    flex-direction: row;
+                    align-items: center;
+                    
+                    input {
+                      width: 20px;
+                      height: 20px;
+                      margin-left: 10px;
+                    }
+                  }
+                }
+                
+                .saveButton {
+                  margin-top: 15px;
+                  padding: 12px 20px;
+                  background-color: #7451f8;
+                  color: white;
+                  border: none;
+                  border-radius: 5px;
+                  cursor: pointer;
+                  font-size: 16px;
+                  font-weight: 600;
+                  
+                  &:hover {
+                    background-color: #5925f3;
+                  }
+                  
+                  &:disabled {
+                    background-color: #b8a8fa;
+                    cursor: not-allowed;
+                  }
+                }
+              }
+            }
+          }
+        }
+  
+        .right {
+          flex: 1;
+          
+          .productStats {
+            box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+            padding: 20px;
+            border-radius: 8px;
+            
+            h2 {
+              color: #888;
+              font-size: 18px;
+              margin-bottom: 20px;
+            }
+            
+            .statItem {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 15px;
+              padding-bottom: 10px;
+              border-bottom: 1px dashed #eee;
+              
+              &:last-child {
+                border-bottom: none;
+              }
+              
+              .statTitle {
+                font-weight: 600;
+                color: #555;
+              }
+              
+              .statValue {
+                color: #333;
+                word-break: break-word;
+                max-width: 70%;
+                text-align: right;
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  
+  // Loading and error states
+  .single-product-loading,
+  .single-product-error,
+  .single-product-not-found {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 300px;
+    width: 100%;
+    font-size: 18px;
+    color: #555;
+    text-align: center;
+  }
+  
+  .single-product-error {
+    color: #e53935;
+  }
