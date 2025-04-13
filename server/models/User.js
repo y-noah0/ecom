@@ -46,8 +46,8 @@ const UserSchema = new mongoose.Schema({
     required: true 
   },
   profilePicture: {
-    type: String, // URL or file path to the profile picture
-    default: '' // Optional: set a default value
+    type: String, 
+    default: '' 
   },
   role: { 
     type: String, 

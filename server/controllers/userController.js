@@ -6,7 +6,7 @@ const userController = {
   // Register new user
   register: async (req, res) => {
     try {
-      const { name, username, email, password, phone } = req.body;
+      const { name, username, email, password, phone, address } = req.body;
       
       // Validate required fields
       if (!name || !username || !email || !password || !phone) {
@@ -15,17 +15,28 @@ const userController = {
         });
       }
 
+      // Parse the address string back to object
+      const parsedAddress = address ? JSON.parse(address) : null;
+
+      // Handle profile picture upload
+      let profilePicture = null;
+      if (req.file) {
+        profilePicture = req.file.path; // Cloudinary URL
+      }
+
       // Hash password
       const salt = await bcrypt.genSalt(10);
       const hashedPassword = await bcrypt.hash(password, salt);
       
-      // Create new user
+      // Create new user with profile picture and address
       const user = await User.create({
         name,
         username,
         email,
         password: hashedPassword,
-        phone
+        phone,
+        profilePicture, // Add the profile picture URL
+        addresses: parsedAddress ? [parsedAddress] : [] // Add address as an array
       });
 
       // Create token
@@ -39,7 +50,8 @@ const userController = {
         user: {
           id: user._id,
           email: user.email,
-          role: user.role
+          role: user.role,
+          profilePicture: user.profilePicture
         },
         token
       });
@@ -176,6 +188,33 @@ getUserById: async (req, res) => {
     res.json({ data: user });
   } catch (error) {
     res.status(400).json({ error: error.message });
+  }
+},
+
+// Upload profile picture
+uploadProfilePicture: async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    // Update user profile with new image URL
+    const user = await User.findByIdAndUpdate(
+      req.user.id,
+      { profilePicture: req.file.path },
+      { new: true }
+    ).select('-password');
+
+    if (!user) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({
+      message: 'Profile picture uploaded successfully',
+      profilePicture: user.profilePicture
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
   }
 }
 };

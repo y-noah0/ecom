@@ -21,9 +21,16 @@ export const userService = {
 export const productService = {
   getAll: () => axios.get(`${API_BASE_URL}/products`),
   getById: (id) => axios.get(`${API_BASE_URL}/products/${id}`),
-  create: (productData) => axios.post(`${API_BASE_URL}/products`, productData, { headers: getAuthHeaders() }),
+  create: (productData) => {
+    const headers = {
+      ...getAuthHeaders(),
+      'Content-Type': 'multipart/form-data', // Important for file upload
+    };
+    return axios.post(`${API_BASE_URL}/products`, productData, { headers });
+  },
   update: (id, productData) => axios.put(`${API_BASE_URL}/products/${id}`, productData, { headers: getAuthHeaders() }),
   delete: (id) => axios.delete(`${API_BASE_URL}/products/${id}`, { headers: getAuthHeaders() }),
+  filter: (params) => axios.get(`${API_BASE_URL}/products/filter`, { params }),
 };
 
 // Order Services

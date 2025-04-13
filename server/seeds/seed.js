@@ -5,11 +5,11 @@ import dotenv from 'dotenv';
 import slugify from 'slugify';
 
 // Import models
-import User from './models/User.js';
-import Product from './models/Product.js';
-import Category from './models/Category.js';
-import Order from './models/Order.js';
-import Review from './models/review.js';
+import User from '../models/User.js';
+import Product from '../models/Product.js';
+import Category from '../models/Category.js';
+import Order from '../models/Order.js';
+import Review from '../models/review.js';
 
 dotenv.config();
 

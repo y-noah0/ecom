@@ -3,14 +3,16 @@ import mongoose from 'mongoose';
 const ProductSchema = new mongoose.Schema({
   name: { 
     type: String, 
-    required: true 
+    required: true,
+    trim: true
   },
   description: { 
     type: String, 
     required: true 
   },
   images: [{ 
-    type: String 
+    type: String,
+    required: true
   }],
   price: { 
     type: Number, 
@@ -24,15 +26,24 @@ const ProductSchema = new mongoose.Schema({
     ref: 'Category',
     required: true
   },
-  // Add reviews field
   reviews: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Review'
   }],
   variants: [{
-    color: String,
-    size: String,
-    quantity: Number
+    color: {
+      type: String,
+      required: true
+    },
+    size: {
+      type: String,
+      required: true
+    },
+    quantity: {
+      type: Number,
+      required: true,
+      min: 0
+    }
   }],
   inStock: { 
     type: Boolean, 

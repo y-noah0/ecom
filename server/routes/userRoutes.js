@@ -2,11 +2,12 @@ import express from 'express';
 import userController from '../controllers/userController.js';
 import auth from '../middleware/auth.js';
 import admin from '../middleware/admin.js';
+import upload from '../middleware/imageUpload.js';
 
 const router = express.Router();
 
 // Public routes
-router.post('/register', userController.register);
+router.post('/register', upload.single('profilePicture'), userController.register);
 router.post('/login', userController.login);
 
 // Protected routes

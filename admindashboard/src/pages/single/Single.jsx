@@ -20,7 +20,7 @@ const Single = () => {
   if (isLoading) return <div>Loading...</div>;
   if (error) return <div>Error: {error.message}</div>;
 
-  const userData = user?.data;
+  const userData = user?.data?.data; // Access the nested data property
   console.log( 'user data', userData); 
   const address = userData?.addresses?.[0]; // Get first address
 
@@ -35,12 +35,12 @@ const Single = () => {
             <h1 className="title">Information</h1>
             <div className="item">
               <img
-                src={userData?.profilePicture || "https://images.pexels.com/photos/733872/pexels-photo-733872.jpeg"}
-                alt=""
+                src={userData?.profilePicture }
+                alt={userData?.name}
                 className="itemImg"
               />
               <div className="details">
-                <h1 className="itemTitle">{userData?.name || "Jane Doe"}</h1>
+                <h1 className="itemTitle">{userData?.name}</h1>
                 <div className="detailItem">
                   <span className="itemKey">Email:</span>
                   <span className="itemValue">{userData?.email || "janedoe@gmail.com"}</span>
@@ -68,7 +68,7 @@ const Single = () => {
         </div>
         <div className="bottom">
           <h1 className="title">Last Transactions</h1>
-          <List orders={userData?.data.orders || []}/>
+          <List orders={userData?.orders || []} />  {/* Remove .data here */}
         </div>
       </div>
     </div>

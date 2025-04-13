@@ -112,21 +112,46 @@ const productController = {
   createProduct: async (req, res) => {
     try {
       // Validate required fields
-      const { name, description, price, categoryId, variants } = req.body;
+      const { name, description, price, categoryId } = req.body;
+      let variants = [];
+      
+      // Parse variants if it's a string
+      if (typeof req.body.variants === 'string') {
+        variants = JSON.parse(req.body.variants);
+      } else {
+        variants = req.body.variants;
+      }
+
       if (!name || !description || !price || !categoryId || !variants) {
         return res.status(400).json({ 
           error: "Missing required fields" 
         });
       }
 
+      // Handle multiple image uploads
+      let images = [];
+      if (req.files && req.files.length > 0) {
+        images = req.files.map(file => file.path);
+      } else {
+        return res.status(400).json({
+          error: "At least one product image is required"
+        });
+      }
+
+      // Create the product with properly parsed variants
       const product = await Product.create({
-        ...req.body,
-        category: categoryId // Map categoryId to category
+        name,
+        description,
+        price,
+        category: categoryId,
+        images,
+        variants: variants // Now it's an array of objects
       });
 
       const populatedProduct = await product.populate('category');
       res.status(201).json(populatedProduct);
     } catch (error) {
+      console.error('Create product error:', error);
       res.status(400).json({ error: error.message });
     }
   },

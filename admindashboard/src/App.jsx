@@ -5,7 +5,6 @@ import List from "./pages/list/List";
 import Single from "./pages/single/Single";
 import New from "./pages/new/New";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { productInputs, userInputs } from "./formSource";
 import "./styles/dark.scss";
 import { useContext } from "react";
 import PropTypes from "prop-types";
@@ -15,6 +14,7 @@ import SingleProduct from "./pages/SingleProduct/SingleProduct";
 import ProductList from "./pages/productList/ProductList";
 import OrderList from "./pages/orderList/OrderList";
 import SingleOrder from "./pages/singleorder/SingleOrder";
+import NewProduct from "./pages/newproduct/NewProduct";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -63,7 +63,7 @@ function App() {
               } />
               <Route path="new" element={
                 <ProtectedRoute>
-                  <New inputs={userInputs} title="Add New User" />
+                  <New  />
                 </ProtectedRoute>
               } />
             </Route>
@@ -82,7 +82,7 @@ function App() {
               } />
               <Route path="new" element={
                 <ProtectedRoute>
-                  <New inputs={productInputs} title="Add New Product" />
+                  <NewProduct/>
                 </ProtectedRoute>
               } />
             </Route>
