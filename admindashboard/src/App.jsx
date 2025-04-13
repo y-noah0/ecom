@@ -14,6 +14,7 @@ import { AuthContext } from "./Context/authcontext/AuthContext";
 import SingleProduct from "./pages/SingleProduct/SingleProduct";
 import ProductList from "./pages/productList/ProductList";
 import OrderList from "./pages/orderList/OrderList";
+import SingleOrder from "./pages/singleorder/SingleOrder";
 
 
 const ProtectedRoute = ({ children }) => {
@@ -95,7 +96,7 @@ function App() {
               } />
               <Route path=":orderId" element={
                 <ProtectedRoute>
-                  <Single />
+                  <SingleOrder />
                 </ProtectedRoute>
               } />
               <Route path="new" element={

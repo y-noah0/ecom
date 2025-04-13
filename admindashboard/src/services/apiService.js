@@ -28,11 +28,29 @@ export const productService = {
 
 // Order Services
 export const orderService = {
-  getAll: () => axios.get(`${API_BASE_URL}/orders`, { headers: getAuthHeaders() }),
-  getById: (id) => axios.get(`${API_BASE_URL}/orders/${id}`, { headers: getAuthHeaders() }),
-  create: (orderData) => axios.post(`${API_BASE_URL}/orders`, orderData, { headers: getAuthHeaders() }),
-  update: (id, orderData) => axios.put(`${API_BASE_URL}/orders/${id}`, orderData, { headers: getAuthHeaders() }),
-  delete: (id) => axios.delete(`${API_BASE_URL}/orders/${id}`, { headers: getAuthHeaders() }),
+  getAll: async (queryString) => {
+    return axios.get(`${API_BASE_URL}/orders?${queryString}`, { 
+      headers: getAuthHeaders() 
+    });
+  },
+  
+  getOne: async (id) => {
+    return axios.get(`${API_BASE_URL}/orders/${id}`, {
+      headers: getAuthHeaders()
+    });
+  },
+  
+  delete: async (id) => {
+    return axios.delete(`${API_BASE_URL}/orders/${id}`, {
+      headers: getAuthHeaders()
+    });
+  },
+  
+  updateStatus: async (id, statusData) => {
+    return axios.patch(`${API_BASE_URL}/orders/${id}/status`, statusData, {
+      headers: getAuthHeaders()
+    });
+  },
 };
 
 // Category Services

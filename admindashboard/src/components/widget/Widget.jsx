@@ -4,9 +4,16 @@ import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
 import AccountBalanceWalletOutlinedIcon from "@mui/icons-material/AccountBalanceWalletOutlined";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import MonetizationOnOutlinedIcon from "@mui/icons-material/MonetizationOnOutlined";
+import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 
 const Widget = ({ type }) => {
-  let data;
+  let data = {
+    title: "N/A",
+    isMoney: false,
+    link: null,
+    icon: null,
+  };
 
   //temporary
   const amount = 100;
@@ -17,7 +24,7 @@ const Widget = ({ type }) => {
       data = {
         title: "USERS",
         isMoney: false,
-        link: "See all users",
+        link: <Link to="/users" style={{ textDecoration: "none", color: "black"}}>See all users</Link>,
         icon: (
           <PersonOutlinedIcon
             className="icon"
@@ -33,7 +40,7 @@ const Widget = ({ type }) => {
       data = {
         title: "ORDERS",
         isMoney: false,
-        link: "View all orders",
+        link: <Link to="/orders" style={{ textDecoration: "none", color: "black"}}>View all orders</Link>,
         icon: (
           <ShoppingCartOutlinedIcon
             className="icon"
@@ -45,11 +52,11 @@ const Widget = ({ type }) => {
         ),
       };
       break;
-    case "earning":
+    case "products":
       data = {
-        title: "EARNINGS",
-        isMoney: true,
-        link: "View net earnings",
+        title: "PRODUCTS",
+        isMoney: false,
+        link: <Link to="/products" style={{ textDecoration: "none", color: "black"}}>View all products</Link>,
         icon: (
           <MonetizationOnOutlinedIcon
             className="icon"
@@ -62,7 +69,7 @@ const Widget = ({ type }) => {
       data = {
         title: "BALANCE",
         isMoney: true,
-        link: "See details",
+        link: <Link to="/profile" style={{ textDecoration: "none", color: "black"}}>See details</Link>,
         icon: (
           <AccountBalanceWalletOutlinedIcon
             className="icon"
@@ -96,6 +103,10 @@ const Widget = ({ type }) => {
       </div>
     </div>
   );
+};
+
+Widget.propTypes = {
+  type: PropTypes.string.isRequired,
 };
 
 export default Widget;

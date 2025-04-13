@@ -36,13 +36,24 @@ const ProductDatatable = () => {
       field: "category", 
       headerName: "Category", 
       width: 130,
-      // Safe access to category with null checking
-      valueGetter: (params) => {
-        // Check if params and params.row exist
-        if (!params || !params.row) return 'N/A';
+      renderCell: (params) => {
+        // Handle different category data structures
+        const category = params.row.category;
         
-        // Check if category exists and has a name property
-        return params.row.category && params.row.category.name ? params.row.category.name : 'N/A';
+        // If category is null or undefined
+        if (!category) return <div>N/A</div>;
+        
+        // If category is populated as an object
+        if (typeof category === 'object') {
+          return <div>{category.name || 'N/A'}</div>;
+        }
+        
+        // If category is just an ID
+        if (typeof category === 'string') {
+          return <div>{category}</div>;
+        }
+        
+        return <div>N/A</div>;
       }
     },
     { 
@@ -63,9 +74,24 @@ const ProductDatatable = () => {
     { 
       field: "rating", 
       headerName: "Rating", 
-      width: 100,
-      // Add safe check for rating
-      valueGetter: (params) => params.row?.rating ?? 'N/A'
+      width: 130,
+      renderCell: (params) => {
+        const rating = params.row?.rating ?? 0;
+        const numReviews = params.row?.numReviews ?? 0;
+        
+        return (
+          <div className="ratingCell">
+            <div className="ratingValue">
+              <span className="stars">
+                {rating.toFixed(1)} ★
+              </span>
+              <span className="reviewCount">
+                ({numReviews})
+              </span>
+            </div>
+          </div>
+        );
+      }
     },
   ];
 

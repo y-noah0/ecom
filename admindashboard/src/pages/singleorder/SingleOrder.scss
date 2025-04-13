@@ -1,0 +1,118 @@
+// singleOrder.scss
+.single {
+    display: flex;
+    .singleContainer {
+      flex: 6;
+      .top {
+        padding: 20px;
+        display: flex;
+        gap: 20px;
+        .left {
+          flex: 1;
+          box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.1);
+          padding: 20px;
+          position: relative;
+          .editButton {
+            position: absolute;
+            top: 0;
+            right: 0;
+            padding: 5px;
+            font-size: 12px;
+            color: #7451f8;
+            background-color: #7551f818;
+            cursor: pointer;
+            border-radius: 0px 0px 0px 5px;
+          }
+          .title {
+            font-size: 16px;
+            color: gray;
+            margin-bottom: 20px;
+          }
+          .item {
+            .details {
+              .itemTitle {
+                margin-bottom: 10px;
+                color: #333;
+              }
+              .detailItem {
+                margin-bottom: 10px;
+                font-size: 14px;
+                .itemKey {
+                  font-weight: bold;
+                  color: gray;
+                  margin-right: 10px;
+                }
+                .itemValue {
+                  font-weight: 300;
+                }
+              }
+            }
+          }
+        }
+        .right {
+          flex: 2;
+          box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.1);
+          padding: 20px;
+        }
+      }
+      .bottom {
+        padding: 20px;
+        box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.1);
+        margin: 10px 20px;
+        .title {
+          font-size: 16px;
+          color: gray;
+          margin-bottom: 20px;
+        }
+        .itemTable {
+          width: 100%;
+          border-collapse: collapse;
+          margin-top: 1rem;
+
+          th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+          }
+
+          th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+          }
+
+          .productCell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+
+            .productImage {
+              width: 50px;
+              height: 50px;
+              object-fit: cover;
+              border-radius: 4px;
+            }
+          }
+
+          .productDetails {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            
+            span {
+              font-size: 0.875rem;
+              color: #666;
+            }
+          }
+
+          .totalRow {
+            font-weight: 600;
+            background-color: #f8f9fa;
+
+            .totalLabel {
+              text-align: right;
+            }
+          }
+        }
+      }
+    }
+  }

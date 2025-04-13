@@ -1,5 +1,6 @@
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
+import User from '../models/User.js';
 
 const orderController = {
   // Create new order
@@ -47,15 +48,15 @@ const orderController = {
   getOne: async (req, res) => {
     try {
       const order = await Order.findById(req.params.id)
-        .populate('products.productId') // Ensure this matches the schema
-        .populate('user', '-password');
+        .populate('products.productId')
+        .populate('userId', '-password'); // Changed from 'user' to 'userId'
 
       if (!order) {
         return res.status(404).json({ error: 'Order not found' });
       }
 
       // Check if the user is authorized to view this order
-      if (order.user._id.toString() !== req.user.userId && req.user.role !== 'admin') {
+      if (order.userId._id.toString() !== req.user.userId && req.user.role !== 'admin') {
         return res.status(403).json({ error: 'Not authorized' });
       }
 
@@ -73,18 +74,83 @@ const orderController = {
         return res.status(403).json({ error: 'Not authorized. Admin access required.' });
       }
 
-      const orders = await Order.find({})
-        .populate('products.productId')
-        .populate('userId', 'name email')
-        .sort('-createdAt');
+      // Pagination parameters
+      const page = parseInt(req.query.page) || 1;
+      const limit = parseInt(req.query.limit) || 10;
+      const skip = (page - 1) * limit;
 
-      res.json({
-        count: orders.length,
-        orders: orders
-      });
+      // Build filter object
+      let filter = {};
+
+      // Status filter
+      if (req.query.status) {
+        filter.status = req.query.status;
+      }
+
+      // Date range filter
+      if (req.query.startDate || req.query.endDate) {
+        filter.createdAt = {};
+        if (req.query.startDate) {
+          filter.createdAt.$gte = new Date(req.query.startDate);
+        }
+        if (req.query.endDate) {
+          filter.createdAt.$lte = new Date(req.query.endDate);
+        }
+      }
+
+      // Price range filter
+      if (req.query.minPrice || req.query.maxPrice) {
+        filter.totalPrice = {};
+        if (req.query.minPrice) {
+          filter.totalPrice.$gte = parseFloat(req.query.minPrice);
+        }
+        if (req.query.maxPrice) {
+          filter.totalPrice.$lte = parseFloat(req.query.maxPrice);
+        }
+      }
+
+      // Search by customer name or email
+      if (req.query.search) {
+        const userIds = await User.find({
+          $or: [
+            { name: { $regex: req.query.search, $options: 'i' } },
+            { email: { $regex: req.query.search, $options: 'i' } }
+          ]
+        }).distinct('_id');
+        filter.userId = { $in: userIds };
+      }
+
+      try {
+        // Get total count for pagination
+        const totalOrders = await Order.countDocuments(filter);
+
+        // Get filtered orders
+        const orders = await Order.find(filter)
+          .populate({
+            path: 'userId',
+            select: 'name email'
+          })
+          .populate('products.productId')
+          .sort({ [req.query.sortBy || 'createdAt']: parseInt(req.query.sortOrder) || -1 })
+          .skip(skip)
+          .limit(limit);
+
+        return res.json({
+          orders,
+          pagination: {
+            currentPage: page,
+            totalPages: Math.ceil(totalOrders / limit),
+            totalOrders,
+            hasMore: skip + orders.length < totalOrders
+          }
+        });
+      } catch (err) {
+        console.error('Database query error:', err);
+        return res.status(500).json({ error: 'Database query failed' });
+      }
     } catch (error) {
-      console.error('Error fetching all orders:', error);
-      res.status(500).json({ error: 'Error fetching orders' });
+      console.error('General error:', error);
+      return res.status(500).json({ error: error.message });
     }
   },
 

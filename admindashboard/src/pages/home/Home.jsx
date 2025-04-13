@@ -5,8 +5,12 @@ import Widget from "../../components/widget/Widget";
 import Featured from "../../components/featured/Featured";
 import Chart from "../../components/chart/Chart";
 import Table from "../../components/table/Table";
+import { useLatestOrders } from "../../hooks/orderHooks/useOrder";
 
 const Home = () => {
+
+  const { orders, isLoading, error } = useLatestOrders(5);
+  console.log("orders", orders);
   return (
     <div className="home">
       <Sidebar />
@@ -15,7 +19,7 @@ const Home = () => {
         <div className="widgets">
           <Widget type="user" />
           <Widget type="order" />
-          <Widget type="earning" />
+          <Widget type="products" />
           <Widget type="balance" />
         </div>
         <div className="charts">
@@ -24,7 +28,13 @@ const Home = () => {
         </div>
         <div className="listContainer">
           <div className="listTitle">Latest Transactions</div>
-          <Table />
+          {isLoading ? (
+            <div>Loading...</div>
+          ) : error ? (
+            <div>Error: {error.message}</div>
+          ) : (
+            <Table orders={orders} />
+          )}
         </div>
       </div>
     </div>
