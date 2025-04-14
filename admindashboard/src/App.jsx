@@ -5,16 +5,17 @@ import List from "./pages/list/List";
 import Single from "./pages/single/Single";
 import New from "./pages/new/New";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { userInputs, productInputs } from "./formsource";
 import "./styles/dark.scss";
 import { useContext } from "react";
 import PropTypes from "prop-types";
 import { DarkModeContext } from "./context/darkModeContext";
-import { AuthContext } from "./Context/authcontext/AuthContext";
 import SingleProduct from "./pages/SingleProduct/SingleProduct";
 import ProductList from "./pages/productList/ProductList";
 import OrderList from "./pages/orderList/OrderList";
 import SingleOrder from "./pages/singleorder/SingleOrder";
 import NewProduct from "./pages/newproduct/NewProduct";
+import { AuthContext } from "./context/authcontext/AuthContext";
 
 
 const ProtectedRoute = ({ children }) => {

@@ -14,29 +14,59 @@ import SignIn from "./components/SignIn";
 import About from "./components/About";
 import Account from "./components/Account";
 import Header from "./components/Header";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import ResetPassword from "./components/ResetPassword";
+import EmailVerification from "./components/EmailVerification";
 
 import { CartProvider } from "./context/cart-context";
+import { AuthProvider } from "./context/auth-context";
+import { WishlistProvider } from "./context/wishlist-context";
 
 function App() {
   return (
-    <CartProvider>
-      <ToastContainer />
-      <Header />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/shop" element={<AllProducts />} />
-        <Route path="account" element={<Account />} />
-        <Route path="/signup" element={<Signup />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/cart" element={<Cart />} />
-        <Route path="/checkout" element={<Checkout />} />
-        <Route path="/contact" element={<Contact />} />
-        <Route path="/wishlist" element={<WishList />} />
-        <Route path="/product/:productId" element={<ProductDetails />} />
-        {<Route path="/*" element={<NotFound />} />}
-      </Routes>
-    </CartProvider>
+    <AuthProvider>
+      <WishlistProvider>
+        <CartProvider>
+          <ToastContainer />
+          <Header />
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/shop" element={<AllProducts />} />
+            <Route path="/product/:productId" element={<ProductDetails />} />
+            <Route path="/signup" element={<Signup />} />
+            <Route path="/signin" element={<SignIn />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            <Route path="/verify-email" element={<EmailVerification />} />
+            <Route path="/contact" element={<Contact />} />
+            
+            {/* Protected Routes */}
+            <Route path="/account" element={
+              <ProtectedRoute>
+                <Account />
+              </ProtectedRoute>
+            } />
+            <Route path="/cart" element={
+              <ProtectedRoute>
+                <Cart />
+              </ProtectedRoute>
+            } />
+            <Route path="/checkout" element={
+              <ProtectedRoute>
+                <Checkout />
+              </ProtectedRoute>
+            } />
+            <Route path="/wishlist" element={
+              <ProtectedRoute>
+                <WishList />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/*" element={<NotFound />} />
+          </Routes>
+        </CartProvider>
+      </WishlistProvider>
+    </AuthProvider>
   );
 }
-export default App;
+export default App; 

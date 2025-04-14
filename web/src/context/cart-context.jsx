@@ -1,75 +1,106 @@
 // src/context/cart-context.js
-import { createContext, useState, useEffect, useContext } from "react";
+import PropTypes from 'prop-types';
+import { createContext } from 'react';
+import { useCart as useCartQuery } from '../Hooks/useCart';
 
 export const CartContext = createContext();
-export const useCart = () => useContext(CartContext);
 
 export const CartProvider = ({ children }) => {
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem("cartItems");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+  const {
+    cart,
+    isLoading,
+    error,
+    addToCart: addToCartMutation,
+    updateQuantity: updateQuantityMutation,
+    removeFromCart: removeFromCartMutation,
+    clearCart: clearCartMutation
+  } = useCartQuery();
 
-  useEffect(() => {
-    localStorage.setItem("cartItems", JSON.stringify(cartItems));
-  }, [cartItems]);
-
-  const addToCart = (item) => {
-    const isItemInCart = cartItems.find((cartItem) => cartItem.id === item.id);
-    if (isItemInCart) {
-      setCartItems(
-        cartItems.map((cartItem) =>
-          cartItem.id === item.id
-            ? { ...cartItem, quantity: cartItem.quantity + 1 }
-            : cartItem
-        )
-      );
-    } else {
-      setCartItems([...cartItems, { ...item, quantity: 1 }]);
+  const addToCart = async (product) => {
+    try {
+      await addToCartMutation.mutateAsync({
+        productId: product._id,
+        quantity: product.quantity || 1
+      });
+    } catch (error) {
+      console.error('Error adding to cart:', error);
     }
   };
 
-  const removeFromCart = (item) => {
-    const updatedCartItems = cartItems.map((cartItem) =>
-      cartItem.id === item.id
-        ? { ...cartItem, quantity: cartItem.quantity - 1 }
-        : cartItem
-    );
-    setCartItems(updatedCartItems.filter((cartItem) => cartItem.quantity > 0));
+  const updateQuantity = async (productId, quantity) => {
+    try {
+      await updateQuantityMutation.mutateAsync({ productId, quantity });
+    } catch (error) {
+      console.error('Error updating quantity:', error);
+    }
   };
 
-  const removeItemFromCart = (item) => {
-    setCartItems(cartItems.filter((cartItem) => cartItem.id !== item.id));
+  const removeFromCart = async (productId) => {
+    try {
+      await removeFromCartMutation.mutateAsync(productId);
+    } catch (error) {
+      console.error('Error removing from cart:', error);
+    }
   };
 
-  const clearCart = () => {
-    setCartItems([]);
+  const clearCart = async () => {
+    try {
+      await clearCartMutation.mutateAsync();
+    } catch (error) {
+      console.error('Error clearing cart:', error);
+    }
   };
 
   const getCartTotal = () => {
-    return cartItems.reduce(
-      (total, item) => total + item.price * item.quantity,
-      0
-    );
+    return cart?.items?.reduce((total, item) => {
+      return total + (item.product.price * item.quantity);
+    }, 0) || 0;
   };
 
+  // Add the missing getCartItemCount function
   const getCartItemCount = () => {
-    return cartItems.reduce((total, item) => total + item.quantity, 0);
+    return cart?.items?.reduce((total, item) => {
+      return total + item.quantity;
+    }, 0) || 0;
+  };
+
+  // For removing a single item, not the entire product quantity
+  const removeItemFromCart = async (productId) => {
+    try {
+      const existingItem = cart?.items?.find(item => item.product._id === productId);
+      if (existingItem && existingItem.quantity > 1) {
+        await updateQuantityMutation.mutateAsync({ 
+          productId, 
+          quantity: existingItem.quantity - 1 
+        });
+      } else {
+        await removeFromCartMutation.mutateAsync(productId);
+      }
+    } catch (error) {
+      console.error('Error removing item from cart:', error);
+    }
+  };
+
+  const value = {
+    cartItems: cart?.items || [],
+    isLoading,
+    error,
+    addToCart,
+    updateQuantity,
+    removeFromCart,
+    removeItemFromCart,
+    clearCart,
+    getCartTotal,
+    getCartItemCount // Include the function in the context value
   };
 
   return (
-    <CartContext.Provider
-      value={{
-        cartItems,
-        addToCart,
-        removeFromCart,
-        clearCart,
-        getCartTotal,
-        removeItemFromCart,
-        getCartItemCount,
-      }}
-    >
+    <CartContext.Provider value={value}>
       {children}
     </CartContext.Provider>
   );
+};
+
+CartProvider.propTypes = {
+  children: PropTypes.node.isRequired
 };

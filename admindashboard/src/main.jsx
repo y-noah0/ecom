@@ -4,7 +4,7 @@ import "./index.css";
 import App from "./App.jsx";
 import { DarkModeContextProvider } from "./context/darkModeContext.jsx";
 import QueryProvider from "./provider/QueryClientProvider.jsx";
-import { AuthContextProvider } from "./Context/authcontext/AuthContext.jsx";
+import { AuthContextProvider } from "./context/authcontext/AuthContext.jsx";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>

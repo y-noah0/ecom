@@ -1,4 +1,4 @@
-import "./single.scss";
+import "./Single.scss";
 import Sidebar from "../../components/sidebar/Sidebar";
 import Navbar from "../../components/navbar/Navbar";
 import { useParams } from "react-router-dom";

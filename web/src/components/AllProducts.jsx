@@ -1,28 +1,31 @@
 import React, { useState } from "react";
-
 import { Link as RouterLink } from "react-router-dom";
-
 import { IoIosArrowForward } from "react-icons/io";
 import { Icon } from "@iconify/react";
 import filterIcon from "@iconify-icons/mi/filter";
 import viewGridIcon from "@iconify-icons/heroicons-solid/view-grid";
 import viewListIcon from "@iconify-icons/heroicons-solid/view-list";
-import data from "../data/AllProducts.json"; // Import the JSON data
 import Services from "../components/Services.jsx";
 import Footer from "./Footer.jsx";
+import { useProduct } from "../Hooks/useProduct";
 
 function AllProducts() {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 8;
+  const { products, isLoading, error } = useProduct();
+
+  if (isLoading) {
+    return <div className="text-center p-8">Loading products...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center p-8 text-red-500">Error loading products: {error.message}</div>;
+  }
 
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = data.AllProducts.slice(
-    indexOfFirstItem,
-    indexOfLastItem
-  );
-
-  const totalPages = Math.ceil(data.AllProducts.length / itemsPerPage);
+  const currentItems = products.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(products.length / itemsPerPage);
 
   const renderPagination = () => {
     const pages = [];
@@ -96,8 +99,8 @@ function AllProducts() {
               style={{ color: "black" }}
             />
             <p className="text-center text-sm ml-4">
-              Showing {indexOfFirstItem + 1}-{indexOfLastItem} of{" "}
-              {data.AllProducts.length} results
+              Showing {indexOfFirstItem + 1}-{Math.min(indexOfLastItem, products.length)} of{" "}
+              {products.length} results
             </p>
           </div>
           <div className="flex items-center space-x-2">
@@ -123,45 +126,43 @@ function AllProducts() {
         </div>
       </div>
       <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 p-4">
-        {currentItems.map((product) => {
-          return (
-            <RouterLink
-              to={`/product/${product.id}`}
-              key={product.id}
-              className="relative bg-white p-4 rounded-lg shadow-lg group"
-            >
-              {product.discount && (
-                <div className="absolute top-8 right-8 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  -{product.discount}%
-                </div>
-              )}
-              {product.tag === "New" && (
-                <div className="absolute top-8 left-8 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
-                  New
-                </div>
-              )}
-              <img
-                src={product.image}
-                alt={product.alt}
-                className="w-full h-64 object-cover mb-4 rounded-md"
-              />
-              <div className="text-center">
-                <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
-                <p className="text-gray-500 mb-2">{product.description}</p>
-                <div className="flex justify-center items-baseline mb-4">
-                  <span className="text-lg font-bold text-gray-900 mr-2">
-                    ${product.price}
-                  </span>
-                  {product.oldPrice && (
-                    <span className="text-sm line-through text-gray-500">
-                      ${product.oldPrice}
-                    </span>
-                  )}
-                </div>
+        {currentItems.map((product) => (
+          <RouterLink
+            to={`/product/${product._id}`}
+            key={product._id}
+            className="relative bg-white p-4 rounded-lg shadow-lg group"
+          >
+            {product.discount > 0 && (
+              <div className="absolute top-8 right-8 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                -{product.discount}%
               </div>
-            </RouterLink>
-          );
-        })}
+            )}
+            {product.isNew && (
+              <div className="absolute top-8 left-8 bg-green-500 text-white text-xs font-bold px-2 py-1 rounded-full">
+                New
+              </div>
+            )}
+            <img
+              src={product.images[0]}
+              alt={product.name}
+              className="w-full h-64 object-cover mb-4 rounded-md"
+            />
+            <div className="text-center">
+              <h2 className="text-xl font-semibold mb-2">{product.name}</h2>
+              <p className="text-gray-500 mb-2">{product.description}</p>
+              <div className="flex justify-center items-baseline mb-4">
+                <span className="text-lg font-bold text-gray-900 mr-2">
+                  ${product.price}
+                </span>
+                {product.oldPrice && (
+                  <span className="text-sm line-through text-gray-500">
+                    ${product.oldPrice}
+                  </span>
+                )}
+              </div>
+            </div>
+          </RouterLink>
+        ))}
       </section>
       <div className="flex justify-center mt-8">{renderPagination()}</div>
       <Services />

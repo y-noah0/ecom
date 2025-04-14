@@ -1,16 +1,15 @@
 import { useState, useEffect } from "react";
-import { NavLink as RouterNavLink, Link } from "react-router-dom";
-
-import Footer from "./Footer";
+import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
-import { useAuthContext } from "../context/auth-context";
+import { useAuthContext } from "../Hooks/useAuthContext";
+import Footer from "./Footer";
 
 function Account() {
-  const { session, handleLogout, loading, updateProfile } = useAuthContext();
+  const { profile, error: authError, isLoading, logout, updateProfile } = useAuthContext();
   const [formData, setFormData] = useState({
-    firstName: session?.user?.user_metadata?.first_name || "",
+    firstName: "",
     lastName: "",
-    email: session?.user?.email || "",
+    email: "",
     address: "",
     newPassword: "",
     currentPassword: "",
@@ -18,21 +17,23 @@ function Account() {
   });
 
   useEffect(() => {
-    if (session) {
-      setFormData((prevData) => ({
-        ...prevData,
-        firstName: session.user.user_metadata?.first_name || "",
-        email: session.user.email || "",
+    if (profile) {
+      setFormData(prev => ({
+        ...prev,
+        firstName: profile.firstName || "",
+        lastName: profile.lastName || "",
+        email: profile.email || "",
+        address: profile.address || ""
       }));
     }
-  }, [session]);
+  }, [profile]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
+    setFormData(prev => ({
+      ...prev,
       [name]: value,
-    });
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -41,7 +42,32 @@ function Account() {
       alert("First name is required");
       return;
     }
-    await updateProfile(formData);
+
+    // Validate password change if attempting to change password
+    if (formData.newPassword || formData.confirmNewPassword || formData.currentPassword) {
+      if (formData.newPassword !== formData.confirmNewPassword) {
+        alert("New passwords don't match");
+        return;
+      }
+      if (!formData.currentPassword) {
+        alert("Current password is required to change password");
+        return;
+      }
+    }
+
+    try {
+      await updateProfile.mutateAsync({
+        firstName: formData.firstName,
+        lastName: formData.lastName,
+        address: formData.address,
+        ...(formData.newPassword && {
+          currentPassword: formData.currentPassword,
+          newPassword: formData.newPassword
+        })
+      });
+    } catch (error) {
+      console.error('Failed to update profile:', error);
+    }
   };
 
   return (
@@ -50,31 +76,18 @@ function Account() {
         <div className="flex flex-wrap justify-between items-center mb-4">
           <div className="relative z-10 p-8 flex flex-col items-center">
             <div className="flex space-x-2 text-black">
-              <Link
-                to="/"
-                className="hover:text-black"
-                style={{ textDecoration: "none" }}
-              >
-                Home
-              </Link>
+              <Link to="/" className="hover:text-black">Home</Link>
               <IoIosArrowForward size="24" className="font-bold" />
-              <Link
-                to="/contact"
-                className="hover:text-black"
-                style={{ textDecoration: "none" }}
-              >
-                Contact
-              </Link>
+              <Link to="/account" className="hover:text-black">Account</Link>
             </div>
           </div>
           <div className="text-sm">
-            <p>
-              Welcome!{" "}
-              <span className="text-red-500">{formData.firstName}</span>
-            </p>
+            <p>Welcome! <span className="text-red-500">{formData.firstName}</span></p>
           </div>
         </div>
+
         <div className="flex flex-wrap">
+          {/* Sidebar Navigation */}
           <div className="w-full lg:w-1/4 mb-8 lg:mb-0">
             <div className="mb-4">
               <h1 className="text-lg font-bold">
@@ -109,12 +122,16 @@ function Account() {
               </div>
             </div>
           </div>
+
+          {/* Main Content */}
           <div className="w-full lg:w-3/4 lg:pl-8">
             <h1 className="text-2xl text-red-500 mb-4">Edit Your Profile</h1>
-            <form
-              onSubmit={handleSubmit}
-              className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4"
-            >
+            {authError && (
+              <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                {authError}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
               <div className="mb-4">
                 <label
                   className="block text-gray-700 text-sm font-bold mb-2"
@@ -232,35 +249,34 @@ function Account() {
               </div>
               <div className="flex flex-col sm:flex-row items-center justify-between space-y-4 sm:space-y-0 sm:space-x-4">
                 <button
-                  className="bg-B88E2F hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto"
                   type="button"
-                  onClick={() =>
-                    setFormData({
-                      firstName: session?.user?.user_metadata?.first_name || "",
-                      lastName: "",
-                      email: session?.user?.email || "",
-                      address: "",
-                      newPassword: "",
-                      currentPassword: "",
-                      confirmNewPassword: "",
-                    })
-                  }
+                  onClick={() => setFormData({
+                    firstName: profile?.firstName || "",
+                    lastName: profile?.lastName || "",
+                    email: profile?.email || "",
+                    address: profile?.address || "",
+                    newPassword: "",
+                    currentPassword: "",
+                    confirmNewPassword: "",
+                  })}
+                  className="bg-B88E2F hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto"
                 >
                   Cancel
                 </button>
                 <button
-                  className="bg-B88E2F hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto"
                   type="submit"
+                  disabled={isLoading}
+                  className="bg-B88E2F hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto"
                 >
-                  Save Changes
+                  {isLoading ? "Saving..." : "Save Changes"}
                 </button>
                 <button
-                  className="bg-B88E2F hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto"
                   type="button"
-                  disabled={loading}
-                  onClick={handleLogout}
+                  onClick={logout}
+                  disabled={isLoading}
+                  className="bg-B88E2F hover:bg-black text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline w-full sm:w-auto"
                 >
-                  {loading ? "Logging Out..." : "Log Out"}
+                  {isLoading ? "Logging Out..." : "Log Out"}
                 </button>
               </div>
             </form>

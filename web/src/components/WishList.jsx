@@ -1,14 +1,13 @@
-import React from "react";
 import { useWishlist } from "../context/wishlist-context";
 import { FaTrashAlt } from "react-icons/fa";
 import { Link } from "react-router-dom";
-import { useCart } from "../context/cart-context.jsx";
+import { useCartContext } from "../Hooks/useCartContext";
 
 import Footer from "./Footer.jsx";
 
 function Wishlist() {
   const { wishlistItems, removeFromWishlist } = useWishlist();
-  const { addToCart } = useCart();
+  const { addToCart } = useCartContext();
   const handleAddToCart = (item) => {
     addToCart(item);
     removeFromWishlist(item.id);
