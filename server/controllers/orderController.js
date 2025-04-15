@@ -35,11 +35,17 @@ const orderController = {
   // Get user's orders
   getUserOrders: async (req, res) => {
     try {
-      const orders = await Order.find({ userId: req.user.userId })
-        .populate('products.productId')
+      const orders = await Order.find({ userId: req.user.id }) // Make sure you're using req.user.id
+        .populate({
+          path: 'products.productId',
+          select: 'name price images'
+        })
         .sort('-createdAt');
+      
+      console.log('Found orders:', orders); // Debug log
       res.json(orders);
     } catch (error) {
+      console.error('Error in getUserOrders:', error);
       res.status(400).json({ error: error.message });
     }
   },

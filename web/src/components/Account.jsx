@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
-import { useAuthContext } from "../Hooks/useAuthContext";
+import { useAuthContext } from "../Hooks/authHooks/useAuthContext";
 import Footer from "./Footer";
 
 function Account() {
@@ -91,12 +91,12 @@ function Account() {
           <div className="w-full lg:w-1/4 mb-8 lg:mb-0">
             <div className="mb-4">
               <h1 className="text-lg font-bold">
-                <Link to="/my-profile">Manage My Account</Link>
+                <Link to="/account">Manage My Account</Link>
               </h1>
             </div>
             <div className="profile mb-8">
               <h2 className="text-red-500 mb-2">
-                <Link to="/my-profile">My Profile</Link>
+                <Link to="/account">My Profile</Link>
               </h2>
               <h2 className="text-gray-400 mb-2">
                 <Link to="/address-book">My Address Book</Link>

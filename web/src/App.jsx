@@ -17,14 +17,15 @@ import Header from "./components/Header";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import ResetPassword from "./components/ResetPassword";
 import EmailVerification from "./components/EmailVerification";
+import MyAddress from "./components/MyAddress";
+import MyOrders from "./components/MyOrders";
 
 import { CartProvider } from "./context/cart-context";
-import { AuthProvider } from "./context/auth-context";
 import { WishlistProvider } from "./context/wishlist-context";
 
 function App() {
   return (
-    <AuthProvider>
+
       <WishlistProvider>
         <CartProvider>
           <ToastContainer />
@@ -61,12 +62,24 @@ function App() {
                 <WishList />
               </ProtectedRoute>
             } />
+            <Route path="/address-book" element={
+              <ProtectedRoute>
+                <MyAddress />
+              </ProtectedRoute>
+            } />
+            <Route 
+              path="/orders" 
+              element={
+                <ProtectedRoute>
+                  <MyOrders />
+                </ProtectedRoute>
+              } 
+            />
             
             <Route path="/*" element={<NotFound />} />
           </Routes>
         </CartProvider>
       </WishlistProvider>
-    </AuthProvider>
   );
 }
-export default App; 
+export default App;

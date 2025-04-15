@@ -2,12 +2,13 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { useAuthContext } from "../Hooks/useAuthContext";
+import { useAuth } from "../Hooks/authHooks/useAuth";
 import Footer from "./Footer";
+import { toast } from "react-toastify";
 
 function SignUp() {
   const navigate = useNavigate();
-  const { register, googleLogin, error: authError, clearError, isLoading, isAuthenticated } = useAuthContext();
+  const { register, googleLogin, error: authError, isLoading, user, clearError } = useAuth();
   const [formData, setFormData] = useState({
     firstName: "",
     email: "",
@@ -16,11 +17,17 @@ function SignUp() {
   const [passwordVisibility, setPasswordVisibility] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
+    if (user) {
       navigate('/');
     }
-    return () => clearError();
-  }, [isAuthenticated, navigate, clearError]);
+  }, [user, navigate]);
+
+  // Cleanup effect for error clearing
+  useEffect(() => {
+    return () => {
+      if (clearError) clearError();
+    };
+  }, [clearError]);
 
   const handleChange = (e) => {
     setFormData({
@@ -31,14 +38,19 @@ function SignUp() {
 
   const handleSignup = async (e) => {
     e.preventDefault();
-    await register.mutateAsync(formData);
+    try {
+      await register(formData);
+      toast.success("Account created successfully!");
+    } catch (error) {
+      toast.error(error.message || "Failed to create account");
+    }
   };
 
   const handleGoogleSignin = async () => {
     try {
       const { google } = window;
       if (!google) {
-        console.error('Google SDK not loaded');
+        toast.error('Google SDK not loaded');
         return;
       }
 
@@ -47,7 +59,12 @@ function SignUp() {
         scope: 'email profile',
         callback: async (response) => {
           if (response.access_token) {
-            await googleLogin.mutateAsync(response.access_token);
+            try {
+              await googleLogin(response.access_token);
+              toast.success("Successfully signed in with Google!");
+            } catch (error) {
+              toast.error("Failed to sign in with Google");
+            }
           }
         },
       });
@@ -55,6 +72,7 @@ function SignUp() {
       auth2.requestAccessToken();
     } catch (error) {
       console.error('Google sign in error:', error);
+      toast.error("Failed to initialize Google sign in");
     }
   };
 

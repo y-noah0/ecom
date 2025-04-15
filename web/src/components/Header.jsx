@@ -8,8 +8,9 @@ import { FaRegUser } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import { CartContext } from "../context/cart-context.jsx";
 import { useWishlist } from "../context/wishlist-context";
-import { useAuthContext } from "../Hooks/useAuthContext";
+
 import AllProducts from "../data/AllProducts.json";
+import { useAuthContext } from "../Hooks/authHooks/useAuthContext.jsx";
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);

@@ -1,17 +1,18 @@
-import PropTypes from 'prop-types';
-import { Navigate, useLocation } from 'react-router-dom';
-import { useAuthContext } from '../Hooks/useAuthContext';
-import LoadingOverlay from './LoadingOverlay';
+import PropTypes from "prop-types";
+import { Navigate, useLocation } from "react-router-dom";
+
+import LoadingOverlay from "./LoadingOverlay";
+import { useAuth } from "../Hooks/authHooks/useAuth";
 
 export const ProtectedRoute = ({ children }) => {
-  const { isAuthenticated, isLoading } = useAuthContext();
+  const { user, isLoading } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
     return <LoadingOverlay message="Checking authentication..." />;
   }
 
-  if (!isAuthenticated) {
+  if (!user) {
     return <Navigate to="/signin" state={{ from: location }} replace />;
   }
 

@@ -2,14 +2,15 @@ import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { useAuthContext } from "../Hooks/useAuthContext";
-import { userService } from "../Services/Api";
+
 import Footer from "./Footer";
+import { userService } from "../Services/Api";
+import { useAuth } from "../Hooks/authHooks/useAuth";
 
 function Login() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { login, googleLogin, error: authError, clearError, isLoading, isAuthenticated } = useAuthContext();
+  const { login, googleLogin, error: authError, isLoading, user } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordVisibility, setPasswordVisibility] = useState(false);
@@ -17,40 +18,35 @@ function Login() {
   const [resetEmailSent, setResetEmailSent] = useState(false);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      // Navigate to the return path if it exists, otherwise go to home
-      const from = location.state?.from?.pathname || '/';
+    if (user) {
+      const from = location.state?.from?.pathname || "/";
       navigate(from, { replace: true });
     }
-    return () => clearError();
-  }, [isAuthenticated, navigate, location, clearError]);
+  }, [user, navigate, location]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    await login.mutateAsync({ email, password });
+    await login({ email, password });
   };
 
   const handleGoogleSignin = async () => {
     try {
       const { google } = window;
-      if (!google) {
-        console.error('Google SDK not loaded');
-        return;
-      }
+      if (!google) throw new Error("Google SDK not loaded");
 
       const auth2 = await google.accounts.oauth2.initTokenClient({
         client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-        scope: 'email profile',
+        scope: "email profile",
         callback: async (response) => {
           if (response.access_token) {
-            await googleLogin.mutateAsync(response.access_token);
+            await googleLogin(response.access_token);
           }
         },
       });
 
       auth2.requestAccessToken();
     } catch (error) {
-      console.error('Google sign in error:', error);
+      console.error("Google sign in error:", error);
     }
   };
 
