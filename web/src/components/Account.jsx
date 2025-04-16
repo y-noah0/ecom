@@ -3,9 +3,11 @@ import { Link } from "react-router-dom";
 import { IoIosArrowForward } from "react-icons/io";
 import { useAuthContext } from "../Hooks/authHooks/useAuthContext";
 import Footer from "./Footer";
+import { useLogout } from "../Hooks/authHooks/useLogout";
 
 function Account() {
-  const { profile, error: authError, isLoading, logout, updateProfile } = useAuthContext();
+  const { profile, error: authError, isLoading, updateProfile } = useAuthContext();
+  const { logout } = useLogout();
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",

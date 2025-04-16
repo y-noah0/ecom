@@ -8,20 +8,24 @@ import { FaRegUser } from "react-icons/fa6";
 import { toast } from 'react-toastify';
 import { CartContext } from "../context/cart-context.jsx";
 import { useWishlist } from "../context/wishlist-context";
-
 import AllProducts from "../data/AllProducts.json";
 import { useAuthContext } from "../Hooks/authHooks/useAuthContext.jsx";
+import { useLogout } from "../Hooks/authHooks/useLogout.jsx";
+
+
 
 function Header() {
   const [isOpen, setIsOpen] = useState(false);
   const { getCartItemCount } = useContext(CartContext);
   const { wishlistItems } = useWishlist();
-  const { isAuthenticated, profile, logout } = useAuthContext();
+  const { isAuthenticated, profile } = useAuthContext();
   const cartItemCount = getCartItemCount();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredProduct, setFilteredProduct] = useState([]);
   const inputValueRef = useRef();
+  const { logout } = useLogout();
   const navigate = useNavigate();
+
 
   const handleToggle = () => {
     setIsOpen(!isOpen);
@@ -29,7 +33,7 @@ function Header() {
 
   const handleLogout = async () => {
     try {
-      await logout();
+        logout();
       toast.success('Successfully logged out');
       navigate('/signin');
     } catch (error) {
