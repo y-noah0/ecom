@@ -18,6 +18,7 @@ function Login() {
   const [resetEmailSent, setResetEmailSent] = useState(false);
 
   useEffect(() => {
+    // Only redirect if user exists and we have a location to go to
     if (user) {
       const from = location.state?.from?.pathname || "/";
       navigate(from, { replace: true });
@@ -26,7 +27,11 @@ function Login() {
 
   const handleLogin = async (e) => {
     e.preventDefault();
-    await login({ email, password });
+    const result = await login({ email, password });
+    if (!result?.error) {
+      const from = location.state?.from?.pathname || "/";
+      navigate(from, { replace: true });
+    }
   };
 
   const handleGoogleSignin = async () => {

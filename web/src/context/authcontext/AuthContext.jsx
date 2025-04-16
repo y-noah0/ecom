@@ -2,7 +2,6 @@ import { createContext, useEffect, useReducer } from "react";
 import PropTypes from "prop-types";
 import { toast } from "react-toastify";
 import SessionManager from "../../utils/SessionManager";
-import RateLimiter from "../../utils/RateLimiter";
 
 export const AuthContext = createContext();
 
@@ -14,7 +13,6 @@ export const authReducer = (state, action) => {
         user: action.payload,
         isAuthenticated: true,
         isLoading: false,
-        error: null
       };
     case "LOGOUT":
       return {
@@ -22,18 +20,11 @@ export const authReducer = (state, action) => {
         user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: null
       };
     case "SET_LOADING":
       return {
         ...state,
         isLoading: action.payload
-      };
-    case "SET_ERROR":
-      return {
-        ...state,
-        error: action.payload,
-        isLoading: false
       };
     default:
       return state;
@@ -42,48 +33,21 @@ export const authReducer = (state, action) => {
 
 export const AuthContextProvider = ({ children }) => {
   const [state, dispatch] = useReducer(authReducer, {
-    user: null,
-    isAuthenticated: false,
-    isLoading: true,
-    error: null
+    user: SessionManager.getStoredUser(), // Initialize with stored user
+    isAuthenticated: !!SessionManager.getStoredUser(),
+    isLoading: false
   });
 
+  // Remove the useEffect that was causing the loop
+  // Only check token expiration
   useEffect(() => {
-    const initAuth = async () => {
-      try {
-        const user = SessionManager.getStoredUser();
-        if (user) {
-          if (SessionManager.isTokenExpiringSoon(user.token)) {
-            handleLogout();
-            toast.error("Session expired. Please login again.");
-          } else {
-            dispatch({ type: "LOGIN", payload: user });
-          }
-        }
-      } catch (error) {
-        console.error("Auth initialization error:", error);
-      } finally {
-        dispatch({ type: "SET_LOADING", payload: false });
-      }
-    };
-
-    initAuth();
-    SessionManager.init(() => {
-      handleLogout();
-      toast.error("Session expired. Please login again.");
-    });
-
-    return () => SessionManager.cleanup();
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("user");
-    dispatch({ type: "LOGOUT" });
-    RateLimiter.resetAttempts("login");
-  };
+    if (state.user && SessionManager.isTokenExpiringSoon(state.user.token)) {
+      toast.warning("Your session will expire soon");
+    }
+  }, [state.user]);
 
   return (
-    <AuthContext.Provider value={{ ...state, dispatch, handleLogout }}>
+    <AuthContext.Provider value={{ ...state, dispatch }}>
       {children}
     </AuthContext.Provider>
   );

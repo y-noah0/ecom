@@ -61,7 +61,7 @@ const MyAddress = () => {
                 <Link to="/account">My Profile</Link>
               </h2>
               <h2 className="text-red-500 mb-2">
-                <Link to="/address-book">My Address Book</Link>
+                <Link to="/my-address">My Address Book</Link>
               </h2>
               <h2 className="text-gray-400 mb-2">
                 <Link to="/payment-options">My Payment Options</Link>

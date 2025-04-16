@@ -80,7 +80,7 @@ const MyOrders = () => {
                 <Link to="/account">My Profile</Link>
               </h2>
               <h2 className="text-gray-400 mb-2">
-                <Link to="/address-book">Address Book</Link>
+                <Link to="/my-address">Address Book</Link>
               </h2>
               <h2 className="text-gray-400 mb-2">
                 <Link to="/payment-options">My Payment Options</Link>

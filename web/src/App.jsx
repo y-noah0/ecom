@@ -19,67 +19,66 @@ import ResetPassword from "./components/ResetPassword";
 import EmailVerification from "./components/EmailVerification";
 import MyAddress from "./components/MyAddress";
 import MyOrders from "./components/MyOrders";
+import Footer from "./components/Footer";
 
 import { CartProvider } from "./context/cart-context";
 import { WishlistProvider } from "./context/wishlist-context";
 
-function App() {
-  return (
 
-      <WishlistProvider>
-        <CartProvider>
-          <ToastContainer />
-          <Header />
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/shop" element={<AllProducts />} />
-            <Route path="/product/:productId" element={<ProductDetails />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/signin" element={<SignIn />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/verify-email" element={<EmailVerification />} />
-            <Route path="/contact" element={<Contact />} />
-            
-            {/* Protected Routes */}
-            <Route path="/account" element={
-              <ProtectedRoute>
-                <Account />
-              </ProtectedRoute>
-            } />
-            <Route path="/cart" element={
-              <ProtectedRoute>
-                <Cart />
-              </ProtectedRoute>
-            } />
-            <Route path="/checkout" element={
-              <ProtectedRoute>
-                <Checkout />
-              </ProtectedRoute>
-            } />
-            <Route path="/wishlist" element={
-              <ProtectedRoute>
-                <WishList />
-              </ProtectedRoute>
-            } />
-            <Route path="/address-book" element={
-              <ProtectedRoute>
-                <MyAddress />
-              </ProtectedRoute>
-            } />
-            <Route 
-              path="/orders" 
-              element={
-                <ProtectedRoute>
-                  <MyOrders />
-                </ProtectedRoute>
-              } 
-            />
-            
-            <Route path="/*" element={<NotFound />} />
-          </Routes>
-        </CartProvider>
-      </WishlistProvider>
+function App() {
+
+
+  // Remove the loading check here since we initialize with stored user
+  return (
+    <WishlistProvider>
+      <CartProvider>
+        <ToastContainer />
+        <Header />
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<HomePage />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/shop" element={<AllProducts />} />
+          <Route path="/product/:productId" element={<ProductDetails />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+          <Route path="/verify-email" element={<EmailVerification />} />
+          <Route path="/contact" element={<Contact />} />
+
+          {/* Protected Routes */}
+          <Route path="/checkout" element={
+            <ProtectedRoute>
+              <Checkout />
+            </ProtectedRoute>
+          } />
+          <Route path="/account" element={
+            <ProtectedRoute>
+              <Account />
+            </ProtectedRoute>
+          } />
+          <Route path="/my-address" element={
+            <ProtectedRoute>
+              <MyAddress />
+            </ProtectedRoute>
+          } />
+          <Route path="/orders" element={
+            <ProtectedRoute>
+              <MyOrders />
+            </ProtectedRoute>
+          } />
+          
+          {/* Semi-protected Routes - Allow adding items without login */}
+          <Route path="/cart" element={<Cart />} />
+          <Route path="/wishlist" element={<WishList />} />
+
+          {/* 404 Route - Must be last */}
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+        <Footer />
+      </CartProvider>
+    </WishlistProvider>
   );
 }
+
 export default App;
